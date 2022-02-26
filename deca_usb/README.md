@@ -1,76 +1,34 @@
-# Tatung Einstein DeMiSTified - Deca port
+# Tatung Einstein - DECA USB keyboard
 
-20/01/22 DECA port DeMiSTified by Somhic from prior demistification for Neptuno by @rampa069. Original MiSTer core https://github.com/MiSTer-devel/TatungEinstein_MiSTer/
+This version is for testing the new ULPI USB module from @TheSonders https://github.com/TheSonders/USBKeyboard/blob/main/ULPI_PS2_PUBLIC.v
 
-Special thanks to Alastair M. Robinson creator of [DeMiSTify](https://github.com/robinsonb5/DeMiSTify) for helping me. 
+This is a standalone project that cannot be generated with the make script. It contains all Demistify components but is not in sync with the other Demistify board folders.
 
-[Read this guide if you want to know how I DeMiSTified this core](https://github.com/DECAfpga/DECA_board/tree/main/Tutorials/DeMiSTify).
+**Testing**
 
-**No SDRAM module is needed in this core**
+Please test all your USB keyboards and notify how if it's working or not.  
 
-**Features for Deca board:**
+* If working please provide VID and PID codes of your keyboard (lsusb output codes in Linux)
+* If not working disconnect power and program again the board
 
-* HDMI video output (special resolution will not work on all LCD monitors)
-* VGA 444 video output is available through GPIO (see pinout below). 
-* Audio Line out (3.5 jack green connector) and HDMI audio output
-* PWM audio is available through GPIO (see pinout below)
-* Joystick available through GPIO  (see pinout below).  **Joystick power pin must be 2.5 V**
-  * **DANGER: Connecting power pin above 2.6 V may damage the FPGA**
-  * This core was tested with a Megadrive 6 button gamepad. A permanent high level is applied on pin 7 of DB9, so only works buttons B and C.
+**Requeriments**
 
-**Additional hardware required**:
+* Deca board  
+* USB keyboard (low speed). Low speed USB keyboards are the old ones and possibly the very cheap ones.
+* A mini USB to USB A female adaptor is needed  to be connected into the USB connector next to HDMI.
 
-- PS/2 Keyboard connected to GPIO  (see pinout below)
+* An SD card inserted is required (can be empty)
+* HDMI video output
 
-##### Versions:
+**Binaries**
 
-v0.1 vga only
-v0.2 hdmi version
+* Binaries are found inside TatungEinstein_DeMiSTify/deca_usb/output_files folder
 
-### STATUS
+**Compile the project**
 
-* Working fine
+* Download zip project or `git clone https://github.com/DECAfpga/TatungEinstein_DeMiSTify`
 
-* HDMI video outputs special resolution so will not work on all monitors. 
+* Open quartus and load project from TatungEinstein_DeMiSTify/deca_usb/TatungEinstein_deca.qpf
 
-### Instructions to compile the project for a specific board:
-
-(Note that sof/svf files are already included in /deca/output_files/)
-
-```sh
-git clone https://github.com/somhi/TatungEinstein_DeMiSTify/
-cd TatungEinstein_DeMiSTify
-#Do a first make (will finish in error) but it will download missing submodules 
-make
-cd DeMiSTify
-#Create file site.mk in DeMiSTify folder 
-cp site.template site.mk
-#Edit site.mk and add your own PATHs to Quartus (Q18)
-gedit site.mk
-#Go back to root folder and do a make with board target (deca, neptuno, uareloaded, atlas_cyc). If not specified it will compile for all targets.
-cd ..
-make BOARD=deca
-#when asked just accept default settings with Enter key
-```
-
-After that you can:
-
-* Flash bitstream directly from [command line](https://github.com/DECAfpga/DECA_binaries#flash-bitstream-to-fgpa-with-quartus)
-* Load project in Quartus from /deca/TatungEinstein_deca.qpf 
-
-### Pinout connections:
-
-![pinout_deca](pinout_deca.png)
-
-For 444 video DAC use all VGA pins. For 333 video DAC connect MSB from addon to MSB of location assignment (e.g. connect pin VGAR2 from Waveshare addon to VGA_R[3] Deca pin).
-
-**Others:**
-
-* Button KEY0 is a reset button
-
-### OSD Controls
-
-* F12 show/hide OSD 
-* Long F12 toggles VGA/RGB mode
-* The reset button KEY0 resets the controller (so re-initialises the SD card if it's been changed, reloads any autoboot ROM.) The OSD Reset menu item resets the core itself.
+* Start compilation
 
