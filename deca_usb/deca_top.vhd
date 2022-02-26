@@ -38,8 +38,8 @@ entity deca_top is
 		-- EAR
 		EAR : in std_logic;
 		-- PS2
-		--PS2_KEYBOARD_CLK : inout std_logic;
-		--PS2_KEYBOARD_DAT : inout std_logic;
+		PS2_KEYBOARD_CLK : inout std_logic := '1';
+		PS2_KEYBOARD_DAT : inout std_logic := '1';
 		PS2_MOUSE_CLK    : inout std_logic;
 		PS2_MOUSE_DAT    : inout std_logic;
 		-- UART
@@ -90,7 +90,8 @@ entity deca_top is
 		I2S_D            : out std_logic;
 
 		--Switches to toggle leds in keyboard
-		SW 			: in std_logic_vector(1 downto 0);	-- SW[1], //LedNum   SW[0], //LedCaps
+		SW 			: in std_logic_vector(1 downto 0);	-- SW[0] LedCaps	SW[1] LedNum
+		
 		--TUSB1210
 		USB_CLKIN 	: in std_logic;     	--60MHz from ULPI
 		USB_FAULT_n	: in std_logic;    		--Overcurrent
@@ -225,9 +226,10 @@ architecture RTL of deca_top is
 	signal vga_blank : std_logic;
 
 	-- USB ULPI KEYBOARD
-	signal USB_CLK_PHASE : std_logic;
-	signal PS2_KEYBOARD_CLK : std_logic;
-	signal PS2_KEYBOARD_DAT : std_logic;
+	signal USB_CLK_PHASE  : std_logic;
+	signal USB_PLL_LOCKED : std_logic;
+	signal PS2_KEYBOARD_CLK_USB : std_logic := '1';
+	signal PS2_KEYBOARD_DAT_USB : std_logic := '1';
 
 	component PLL_PHASE90
 		port (
@@ -271,10 +273,10 @@ begin
 	ps2_mouse_clk_in <= ps2_mouse_clk;
 	ps2_mouse_clk    <= '0' when ps2_mouse_clk_out = '0' else 'Z';
 
-	ps2_keyboard_dat_in <= ps2_keyboard_dat;
-	--ps2_keyboard_dat    <= '0' when ps2_keyboard_dat_out = '0' else 'Z';
-	ps2_keyboard_clk_in <= ps2_keyboard_clk;
-	--ps2_keyboard_clk    <= '0' when ps2_keyboard_clk_out = '0' else 'Z';
+	ps2_keyboard_dat_in <= ps2_keyboard_dat and PS2_KEYBOARD_DAT_USB;
+	ps2_keyboard_dat    <= '0' when ps2_keyboard_dat_out = '0' else 'Z';
+	ps2_keyboard_clk_in <= ps2_keyboard_clk and PS2_KEYBOARD_CLK_USB;
+	ps2_keyboard_clk    <= '0' when ps2_keyboard_clk_out = '0' else 'Z';
 	
 
 	-- PLL ULPI_PS2
@@ -282,7 +284,7 @@ begin
 	port map (
 		inclk0		=> USB_CLKIN,
 		c0			=> USB_CLK_PHASE,		
-		locked		=> open
+		locked		=> USB_PLL_LOCKED
 	);
 
 	-- ULPI_PS2
@@ -292,8 +294,8 @@ begin
 		LedNum 		=> SW(1),
 		LedCaps 	=> SW(0),
 		LedScroll 	=> '0',
-		PS2data 	=> PS2_KEYBOARD_DAT,
-		PS2clock 	=> PS2_KEYBOARD_CLK,
+		PS2data 	=> PS2_KEYBOARD_DAT_USB,
+		PS2clock 	=> PS2_KEYBOARD_CLK_USB,
 		FAULT_n 	=> USB_FAULT_n,
 		DATA 		=> USB_DATA,
 		NXT 		=> USB_NXT,
@@ -302,6 +304,7 @@ begin
 		RESET_n 	=> USB_RESET_n,
 		CS 			=> USB_CS
 	);
+
 
 	JOYX_SEL_O          <= '1';
 	joya                <= "11" & JOY1_B2_P9 & JOY1_B1_P6 & JOY1_RIGHT & JOY1_LEFT & JOY1_DOWN & JOY1_UP;
@@ -363,7 +366,6 @@ begin
 	I2S_D   <= i2s_D_o;
 
 
-
 	-- DECA HDMI
 
 	-- HDMI CONFIG    
@@ -406,6 +408,7 @@ begin
 		(
 			CLOCK_27 => MAX10_CLK1_50,
 --	        RESET_N => reset_n,
+			LED => open,
 			LED => LED(0),
 			--SDRAM
 			SDRAM_DQ   => DRAM_DQ,
@@ -465,8 +468,8 @@ begin
 			)
 			port map(
 				clk       => MAX10_CLK1_50,
-				reset_in  => KEY(0),
-				reset_out => reset_n,
+				reset_in  => KEY(0) and USB_PLL_LOCKED,		--reset_in when 0
+				reset_out => reset_n,						--reset_out when 0
 
 				-- SPI signals
 				spi_miso      => sd_miso,

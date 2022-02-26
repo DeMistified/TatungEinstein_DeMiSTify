@@ -283,6 +283,7 @@ always @(posedge clk)begin
     case (TL_STM)
         `TL_PowerON:begin
 			PS2clock<=1;
+            PS2data<=1;
 				SetTimer(1);
 				SendPacket(ULPI_Reset,16);
 				TL_STM<=`TL_ULPI_EnaPulls;
@@ -648,6 +649,7 @@ always @(posedge clk)begin
             71: begin
                 PS2_buffer_busy<=0;
                 PS2TX_STM<=0;
+                PS2data<=1;
             end
             default: begin
                 if (PS2TX_STM[0]==0) begin
