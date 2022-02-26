@@ -9,7 +9,10 @@ This is a standalone project that cannot be generated with the make script. It c
 Please test all your USB keyboards and notify if it's working or not.  
 
 * If working please provide VID and PID codes of your keyboard (lsusb output codes in Linux)
-* If not working try disconnect power and program again the board
+* If not working try disconnecting power and/or program again the board (surely needs implementing the PLL locking)
+
+
+The two switches SW0 and SW1 from Deca board are for toggling the NumLock and CapsLock leds.
 
 **Requeriments**
 
