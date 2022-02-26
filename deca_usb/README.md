@@ -6,7 +6,7 @@ This is a standalone project that cannot be generated with the make script. It c
 
 **Testing**
 
-Please test all your USB keyboards and notify if it's working or not.  
+Please test all your USB keyboards and notify if it's working or not to @TheSonders via issue at his [repository](https://github.com/TheSonders/USBKeyboard/blob/main/ULPI_PS2_PUBLIC.v)
 
 * If working please provide VID and PID codes of your keyboard (lsusb output codes in Linux)
 * If not working try disconnecting power and/or program again the board (surely needs implementing the PLL locking)
