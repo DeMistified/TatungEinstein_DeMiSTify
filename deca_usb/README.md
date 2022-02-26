@@ -6,10 +6,10 @@ This is a standalone project that cannot be generated with the make script. It c
 
 **Testing**
 
-Please test all your USB keyboards and notify how if it's working or not.  
+Please test all your USB keyboards and notify if it's working or not.  
 
 * If working please provide VID and PID codes of your keyboard (lsusb output codes in Linux)
-* If not working disconnect power and program again the board
+* If not working try disconnect power and program again the board
 
 **Requeriments**
 
