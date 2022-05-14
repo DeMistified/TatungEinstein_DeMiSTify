@@ -23,8 +23,6 @@
 module guest_mist
 (       
         output        LED,                                              
-        output        VGA_HS,
-        output        VGA_VS,
         output        AUDIO_L,
         output        AUDIO_R, 
 		  output [15:0]  DAC_L, 
@@ -41,6 +39,8 @@ module guest_mist
         output  [5:0] VGA_R,
         output  [5:0] VGA_G,
         output  [5:0] VGA_B,
+		output        VGA_HS,
+        output        VGA_VS,
 			output vga_blank,
 			output vga_clk,
 			output  [5:0] vga_x_r,
@@ -48,9 +48,9 @@ module guest_mist
 			output  [5:0] vga_x_b,
 			output 		  vga_x_hs,
 			output 		  vga_x_vs,
-		  output [12:0] SDRAM_A,
-		  inout  [15:0] SDRAM_DQ,
-		  output        SDRAM_DQML,
+		output [12:0] SDRAM_A,
+		inout  [15:0] SDRAM_DQ,
+		output        SDRAM_DQML,
         output        SDRAM_DQMH,
         output        SDRAM_nWE,
         output        SDRAM_nCAS,
@@ -291,6 +291,13 @@ video_mixer  video_mixer
    .HBlank(vga_hblank),
    .VBlank(vga_vblank),
 
+	// outputs
+   .VGA_R(VGA_R),
+   .VGA_G(VGA_G),
+   .VGA_B(VGA_B),
+   .VGA_VS(VGA_VS),
+   .VGA_HS(VGA_HS),
+
    //added for HDMI output
    .vga_x_r(vga_x_r),
    .vga_x_g(vga_x_g),
@@ -299,7 +306,7 @@ video_mixer  video_mixer
 );
 
 //added for HDMI output
-assign vga_blank = vga_hblank | vga_vblank;     
+assign vga_blank = vga_hblank | vga_vblank;
 assign vga_clk = clk_sys;     
 assign vga_x_hs = vga_hsync;
 assign vga_x_vs = vga_vsync;
