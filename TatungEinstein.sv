@@ -275,8 +275,8 @@ video_mixer  video_mixer
    .ce_pix_actual(ce_pix),
    .hq2x(scale==1),
 	
-	.scanlines(forced_scandoubler ? 2'b00 : {scale==3, scale==2}),
-	.scandoubler_disable(forced_scandoubler),
+	.scanlines(forced_scandoubler ? 1'b00 : {scale==3, scale==2}),
+	.scandoubler_disable(),
 	.ypbpr(),
 	.ypbpr_full(),
 	.mono(0),
